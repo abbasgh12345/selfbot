@@ -1053,7 +1053,7 @@ end
 --Run function
 local function run(msg, matches)
 	if msg.to.type == 'chat' then
-		if matches[1] == 'tosuper' then 
+		if matches[1]:lower() == 'tosuper' then 
 			if not is_admin1(msg) then
 				return
 			end
@@ -1061,7 +1061,7 @@ local function run(msg, matches)
 			chat_upgrade(receiver, ok_cb, false)
 		end
 	elseif msg.to.type == 'channel'then
-		if matches[1] == 'tosuper' then
+		if matches[1]:lower() == 'tosuper' then
 			if not is_admin1(msg) then
 				return
 			end
@@ -1074,7 +1074,7 @@ local function run(msg, matches)
 	local print_name = user_print_name(msg.from):gsub("‮", "")
 	local name_log = print_name:gsub("_", " ")
 	local data = load_data(_config.moderation.data)
-		if matches[1] == 'add' and not matches[2] then
+		if matches[1]:lower() == 'add' and not matches[2] then
 			if not is_admin1(msg) and not is_support(support_id) then
 				return
 			end
@@ -1088,7 +1088,7 @@ local function run(msg, matches)
 			channel_set_admin(receiver, 'user#id'..msg.from.id, ok_cb, false)
 		end
 
-		if matches[1] == 'rem' and is_admin1(msg) and not matches[2] then
+		if matches[1]:lower() == 'rem' and is_admin1(msg) and not matches[2] then
 			if not is_super_group(msg) then
 				return reply_msg(msg.id, 'SuperGroup is not added.', ok_cb, false)
 			end
@@ -1097,7 +1097,7 @@ local function run(msg, matches)
 			rem_mutes(msg.to.id)
 		end
 
-		if matches[1] == "info" then
+		if matches[1]:lower() == "info" then
 			if not is_owner(msg) then
 				return
 			end
@@ -1105,7 +1105,7 @@ local function run(msg, matches)
 			channel_info(receiver, callback_info, {receiver = receiver, msg = msg})
 		end
 
-		if matches[1] == "admins" then
+		if matches[1]:lower() == "admins" then
 			if not is_owner(msg) and not is_support(msg.from.id) then
 				return
 			end
@@ -1114,7 +1114,7 @@ local function run(msg, matches)
 			admins = channel_get_admins(receiver,callback, {receiver = receiver, msg = msg, member_type = member_type})
 		end
 
-		if matches[1] == "owner" then
+		if matches[1]:lower() == "owner" then
 			local group_owner = data[tostring(msg.to.id)]['set_owner']
 			if not group_owner then
 				return "no owner,ask admins in support groups to set owner for your SuperGroup"
@@ -1123,30 +1123,30 @@ local function run(msg, matches)
 			return "SuperGroup owner is ["..group_owner..']'
 		end
 
-		if matches[1] == "modlist" then
+		if matches[1]:lower() == "modlist" then
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group modlist")
 			return modlist(msg)
 			-- channel_get_admins(receiver,callback, {receiver = receiver})
 		end
 
-		if matches[1] == "bots" and is_momod(msg) then
+		if matches[1]:lower() == "bots" and is_momod(msg) then
 			member_type = 'Bots'
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup bots list")
 			channel_get_bots(receiver, callback, {receiver = receiver, msg = msg, member_type = member_type})
 		end
 
-		if matches[1] == "who" and not matches[2] and is_momod(msg) then
+		if matches[1]:lower() == "who" and not matches[2] and is_momod(msg) then
 			local user_id = msg.from.peer_id
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup users list")
 			channel_get_users(receiver, callback_who, {receiver = receiver})
 		end
 
-		if matches[1] == "kicked" and is_momod(msg) then
+		if matches[1]:lower() == "kicked" and is_momod(msg) then
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested Kicked users list")
 			channel_get_kicked(receiver, callback_kicked, {receiver = receiver})
 		end
 
-		if matches[1] == 'del' and is_momod(msg) then
+		if matches[1]:lower() == 'del' and is_momod(msg) then
 			if type(msg.reply_id) ~= "nil" then
 				local cbreply_extra = {
 					get_cmd = 'del',
@@ -1157,7 +1157,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'block' and is_momod(msg) then
+		if matches[1]:lower() == 'block' and is_momod(msg) then
 			if type(msg.reply_id) ~= "nil" then
 				local cbreply_extra = {
 					get_cmd = 'channel_block',
@@ -1194,7 +1194,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'id' then
+		if matches[1]:lower() == 'id' then
 			if type(msg.reply_id) ~= "nil" and is_momod(msg) and not matches[2] then
 				local cbreply_extra = {
 					get_cmd = 'id',
@@ -1222,14 +1222,14 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'kickme' then
+		if matches[1]:lower() == 'kickme' then
 			if msg.to.type == 'channel' then
 				savelog(msg.to.id, name_log.." ["..msg.from.id.."] left via kickme")
 				channel_kick("channel#id"..msg.to.id, "user#id"..msg.from.id, ok_cb, false)
 			end
 		end
 
-		if matches[1] == 'newlink' and is_momod(msg)then
+		if matches[1]:lower() == 'newlink' and is_momod(msg)then
 			local function callback_link (extra , success, result)
 			local receiver = get_receiver(msg)
 				if success == 0 then
@@ -1246,7 +1246,7 @@ local function run(msg, matches)
 			export_channel_link(receiver, callback_link, false)
 		end
 
-		if matches[1] == 'setlink' and is_owner(msg) then
+		if matches[1]:lower() == 'setlink' and is_owner(msg) then
 			data[tostring(msg.to.id)]['settings']['set_link'] = 'waiting'
 			save_data(_config.moderation.data, data)
 			return 'Please send the new group link now'
@@ -1260,7 +1260,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'link' then
+		if matches[1]:lower() == 'link' then
 			if not is_momod(msg) then
 				return
 			end
@@ -1272,7 +1272,7 @@ local function run(msg, matches)
 			return "Group link:\n"..group_link
 		end
 
-		if matches[1] == "invite" and is_sudo(msg) then
+		if matches[1]:lower() == "invite" and is_sudo(msg) then
 			local cbres_extra = {
 				channel = get_receiver(msg),
 				get_cmd = "invite"
@@ -1283,7 +1283,7 @@ local function run(msg, matches)
 			resolve_username(username,  callbackres, cbres_extra)
 		end
 
-		if matches[1] == 'res' and is_owner(msg) then
+		if matches[1]:lower() == 'res' and is_owner(msg) then
 			local cbres_extra = {
 				channelid = msg.to.id,
 				get_cmd = 'res'
@@ -1300,7 +1300,7 @@ local function run(msg, matches)
 			chaannel_kick(receiver, user, ok_cb, false)
 		end]]
 
-			if matches[1] == 'setadmin' then
+			if matches[1]:lower() == 'setadmin' then
 				if not is_support(msg.from.id) and not is_owner(msg) then
 					return
 				end
@@ -1310,7 +1310,7 @@ local function run(msg, matches)
 					msg = msg
 				}
 				setadmin = get_message(msg.reply_id, get_message_callback, cbreply_extra)
-			elseif matches[1] == 'setadmin' and string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'setadmin' and string.match(matches[2], '^%d+$') then
 			--[[]	local receiver = get_receiver(msg)
 				local user_id = "user#id"..matches[2]
 				local get_cmd = 'setadmin'
@@ -1319,7 +1319,7 @@ local function run(msg, matches)
 				local	msg = msg
 				local user_id = matches[2]
 				channel_get_users (receiver, in_channel_cb, {get_cmd=get_cmd, receiver=receiver, msg=msg, user_id=user_id})
-			elseif matches[1] == 'setadmin' and not string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'setadmin' and not string.match(matches[2], '^%d+$') then
 				--[[local cbres_extra = {
 					channel = get_receiver(msg),
 					get_cmd = 'setadmin'
@@ -1336,7 +1336,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'demoteadmin' then
+		if matches[1]:lower() == 'demoteadmin' then
 			if not is_support(msg.from.id) and not is_owner(msg) then
 				return
 			end
@@ -1346,12 +1346,12 @@ local function run(msg, matches)
 					msg = msg
 				}
 				demoteadmin = get_message(msg.reply_id, get_message_callback, cbreply_extra)
-			elseif matches[1] == 'demoteadmin' and string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'demoteadmin' and string.match(matches[2], '^%d+$') then
 				local receiver = get_receiver(msg)
 				local user_id = "user#id"..matches[2]
 				local get_cmd = 'demoteadmin'
 				user_info(user_id, cb_user_info, {receiver = receiver, get_cmd = get_cmd})
-			elseif matches[1] == 'demoteadmin' and not string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'demoteadmin' and not string.match(matches[2], '^%d+$') then
 				local cbres_extra = {
 					channel = get_receiver(msg),
 					get_cmd = 'demoteadmin'
@@ -1363,14 +1363,14 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'setowner' and is_owner(msg) then
+		if matches[1]:lower() == 'setowner' and is_owner(msg) then
 			if type(msg.reply_id) ~= "nil" then
 				local cbreply_extra = {
 					get_cmd = 'setowner',
 					msg = msg
 				}
 				setowner = get_message(msg.reply_id, get_message_callback, cbreply_extra)
-			elseif matches[1] == 'setowner' and string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'setowner' and string.match(matches[2], '^%d+$') then
 		--[[	local group_owner = data[tostring(msg.to.id)]['set_owner']
 				if group_owner then
 					local receiver = get_receiver(msg)
@@ -1390,7 +1390,7 @@ local function run(msg, matches)
 				local	msg = msg
 				local user_id = matches[2]
 				channel_get_users (receiver, in_channel_cb, {get_cmd=get_cmd, receiver=receiver, msg=msg, user_id=user_id})
-			elseif matches[1] == 'setowner' and not string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'setowner' and not string.match(matches[2], '^%d+$') then
 				local	get_cmd = 'setowner'
 				local	msg = msg
 				local username = matches[2]
@@ -1399,7 +1399,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'promote' then
+		if matches[1]:lower() == 'promote' then
 		  if not is_momod(msg) then
 				return
 			end
@@ -1412,13 +1412,13 @@ local function run(msg, matches)
 					msg = msg
 				}
 				promote = get_message(msg.reply_id, get_message_callback, cbreply_extra)
-			elseif matches[1] == 'promote' and string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'promote' and string.match(matches[2], '^%d+$') then
 				local receiver = get_receiver(msg)
 				local user_id = "user#id"..matches[2]
 				local get_cmd = 'promote'
 				savelog(msg.to.id, name_log.." ["..msg.from.id.."] promoted user#id"..matches[2])
 				user_info(user_id, cb_user_info, {receiver = receiver, get_cmd = get_cmd})
-			elseif matches[1] == 'promote' and not string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == 'promote' and not string.match(matches[2], '^%d+$') then
 				local cbres_extra = {
 					channel = get_receiver(msg),
 					get_cmd = 'promote',
@@ -1430,20 +1430,20 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'mp' and is_sudo(msg) then
+		if matches[1]:lower() == 'mp' and is_sudo(msg) then
 			channel = get_receiver(msg)
 			user_id = 'user#id'..matches[2]
 			channel_set_mod(channel, user_id, ok_cb, false)
 			return "ok"
 		end
-		if matches[1] == 'md' and is_sudo(msg) then
+		if matches[1]:lower() == 'md' and is_sudo(msg) then
 			channel = get_receiver(msg)
 			user_id = 'user#id'..matches[2]
 			channel_demote(channel, user_id, ok_cb, false)
 			return "ok"
 		end
 
-		if matches[1] == 'demote' then
+		if matches[1]:lower() == 'demote' then
 			if not is_momod(msg) then
 				return
 			end
@@ -1474,7 +1474,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == "setname" and is_momod(msg) then
+		if matches[1]:lower() == "setname" and is_momod(msg) then
 			local receiver = get_receiver(msg)
 			local set_name = string.gsub(matches[2], '_', '')
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] renamed SuperGroup to: "..matches[2])
@@ -1487,7 +1487,7 @@ local function run(msg, matches)
 			save_data(_config.moderation.data, data)
 		end
 
-		if matches[1] == "setabout" and is_momod(msg) then
+		if matches[1]:lower() == "setabout" and is_momod(msg) then
 			local receiver = get_receiver(msg)
 			local about_text = matches[2]
 			local data_cat = 'description'
@@ -1499,7 +1499,7 @@ local function run(msg, matches)
 			return "Description has been set.\n\nSelect the chat again to see the changes."
 		end
 
-		if matches[1] == "setusername" and is_admin1(msg) then
+		if matches[1]:lower() == "setusername" and is_admin1(msg) then
 			local function ok_username_cb (extra, success, result)
 				local receiver = extra.receiver
 				if success == 1 then
@@ -1512,7 +1512,7 @@ local function run(msg, matches)
 			channel_set_username(receiver, username, ok_username_cb, {receiver=receiver})
 		end
 
-		if matches[1] == 'setrules' and is_momod(msg) then
+		if matches[1]:lower() == 'setrules' and is_momod(msg) then
 			rules = matches[2]
 			local target = msg.to.id
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] has changed group rules to ["..matches[2].."]")
@@ -1526,14 +1526,14 @@ local function run(msg, matches)
 				return
 			end
 		end
-		if matches[1] == 'setphoto' and is_momod(msg) then
+		if matches[1]:lower() == 'setphoto' and is_momod(msg) then
 			data[tostring(msg.to.id)]['settings']['set_photo'] = 'waiting'
 			save_data(_config.moderation.data, data)
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] started setting new SuperGroup photo")
 			return 'Please send the new group photo now'
 		end
 
-		if matches[1] == 'clean' then
+		if matches[1]:lower() == 'clean' then
 			if not is_momod(msg) then
 				return
 			end
@@ -1594,7 +1594,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'lock' and is_momod(msg) then
+		if matches[1]:lower() == 'lock' and is_momod(msg) then
 			local target = msg.to.id
 			if matches[2] == 'links' then
 				savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked link posting ")
@@ -1634,7 +1634,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'unlock' and is_momod(msg) then
+		if matches[1]:lower() == 'unlock' and is_momod(msg) then
 			local target = msg.to.id
 			if matches[2] == 'links' then
 				savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked link posting")
@@ -1674,7 +1674,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'setflood' then
+		if matches[1]:lower() == 'setflood' then
 			if not is_momod(msg) then
 				return
 			end
@@ -1687,7 +1687,7 @@ local function run(msg, matches)
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] set flood to ["..matches[2].."]")
 			return 'Flood has been set to: '..matches[2]
 		end
-		if matches[1] == 'public' and is_momod(msg) then
+		if matches[1]:lower() == 'public' and is_momod(msg) then
 			local target = msg.to.id
 			if matches[2] == 'yes' then
 				savelog(msg.to.id, name_log.." ["..msg.from.id.."] set group to: public")
@@ -1699,7 +1699,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == 'mute' and is_owner(msg) then
+		if matches[1]:lower() == 'mute' and is_owner(msg) then
 			local chat_id = msg.to.id
 			if matches[2] == 'audio' then
 			local msg_type = 'Audio'
@@ -1772,7 +1772,7 @@ local function run(msg, matches)
 				end
 			end
 		end
-		if matches[1] == 'unmute' and is_momod(msg) then
+		if matches[1]:lower() == 'unmute' and is_momod(msg) then
 			local chat_id = msg.to.id
 			if matches[2] == 'audio' then
 			local msg_type = 'Audio'
@@ -1847,7 +1847,7 @@ local function run(msg, matches)
 		end
 
 
-		if matches[1] == "muteuser" and is_momod(msg) then
+		if matches[1]:lower() == "muteuser" and is_momod(msg) then
 			local chat_id = msg.to.id
 			local hash = "mute_user"..chat_id
 			local user_id = ""
@@ -1855,7 +1855,7 @@ local function run(msg, matches)
 				local receiver = get_receiver(msg)
 				local get_cmd = "mute_user"
 				muteuser = get_message(msg.reply_id, get_message_callback, {receiver = receiver, get_cmd = get_cmd, msg = msg})
-			elseif matches[1] == "muteuser" and string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == "muteuser" and string.match(matches[2], '^%d+$') then
 				local user_id = matches[2]
 				if is_muted_user(chat_id, user_id) then
 					unmute_user(chat_id, user_id)
@@ -1866,7 +1866,7 @@ local function run(msg, matches)
 					savelog(msg.to.id, name_log.." ["..msg.from.id.."] added ["..user_id.."] to the muted users list")
 					return "["..user_id.."] added to the muted user list"
 				end
-			elseif matches[1] == "muteuser" and not string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == "muteuser" and not string.match(matches[2], '^%d+$') then
 				local receiver = get_receiver(msg)
 				local get_cmd = "mute_user"
 				local username = matches[2]
@@ -1875,7 +1875,7 @@ local function run(msg, matches)
 			end
 		end
 
-		if matches[1] == "muteslist" and is_momod(msg) then
+		if matches[1]:lower() == "muteslist" and is_momod(msg) then
 			local chat_id = msg.to.id
 			if not has_mutes(chat_id) then
 				set_mutes(chat_id)
@@ -1884,39 +1884,39 @@ local function run(msg, matches)
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup muteslist")
 			return mutes_list(chat_id)
 		end
-		if matches[1] == "mutelist" and is_momod(msg) then
+		if matches[1]:lower() == "mutelist" and is_momod(msg) then
 			local chat_id = msg.to.id
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup mutelist")
 			return muted_user_list(chat_id)
 		end
 
-		if matches[1] == 'settings' and is_momod(msg) then
+		if matches[1]:lower() == 'settings' and is_momod(msg) then
 			local target = msg.to.id
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup settings ")
 			return show_supergroup_settingsmod(msg, target)
 		end
 
-		if matches[1] == 'rules' then
+		if matches[1]:lower() == 'rules' then
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group rules")
 			return get_rules(msg, data)
 		end
 
-		if matches[1] == 'help' and not is_owner(msg) then
+		if matches[1]:lower() == 'help' and not is_owner(msg) then
 			text = "Message /superhelp to @Teleseed in private for SuperGroup help"
 			reply_msg(msg.id, text, ok_cb, false)
-		elseif matches[1] == 'help' and is_owner(msg) then
+		elseif matches[1]:lower() == 'help' and is_owner(msg) then
 			local name_log = user_print_name(msg.from)
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] Used /superhelp")
 			return super_help()
 		end
 
-		if matches[1] == 'peer_id' and is_admin1(msg)then
+		if matches[1]:lower() == 'peer_id' and is_admin1(msg)then
 			text = msg.to.peer_id
 			reply_msg(msg.id, text, ok_cb, false)
 			post_large_msg(receiver, text)
 		end
 
-		if matches[1] == 'msg.to.id' and is_admin1(msg) then
+		if matches[1]:lower() == 'msg.to.id' and is_admin1(msg) then
 			text = msg.to.id
 			reply_msg(msg.id, text, ok_cb, false)
 			post_large_msg(receiver, text)
@@ -1954,7 +1954,7 @@ local function run(msg, matches)
 				end
 			end
 		end
-		if matches[1] == 'msg.to.peer_id' then
+		if matches[1]:lower() == 'msg.to.peer_id' then
 			post_large_msg(receiver, msg.to.peer_id)
 		end
 	end
@@ -1969,13 +1969,13 @@ end
 
 return {
   patterns = {
-	"^[#!/]([Aa]dd)$",
-	"^[#!/]([Rr]em)$",
+	"^[#!/]([Ii]n)$",
+	"^[#!/]([Oo]ut)$",
 	"^[#!/]([Mm]ove) (.*)$",
 	"^[#!/]([Ii]nfo)$",
 	"^[#!/]([Aa]dmins)$",
-	"^[#!/]([Oo]wner)$",
-	"^[#!/]([Mm]odlist)$",
+	"^[#!/]([Ll]eader)$",
+	"^[#!/]([Mm]ods)$",
 	"^[#!/]([Bb]ots)$",
 	"^[#!/]([Ww]ho)$",
 	"^[#!/]([Kk]icked)$",
@@ -1994,16 +1994,16 @@ return {
 	"^[#!/]([Ss]etadmin)",
 	"^[#!/]([Dd]emoteadmin) (.*)$",
 	"^[#!/]([Dd]emoteadmin)",
-	"^[#!/]([Ss]etowner) (.*)$",
-	"^[#!/]([Ss]etowner)$",
-	"^[#!/]([Pp]romote) (.*)$",
-	"^[#!/]([Pp]romote)",
-	"^[#!/]([Dd]emote) (.*)$",
-	"^[#!/]([Dd]emote)",
-	"^[#!/]([Ss]etname) (.*)$",
+	"^[#!/]([Ll]eaderset) (.*)$",
+	"^[#!/]([Ll]eaderset)$",
+	"^[#!/]([Mm]odset) (.*)$",
+	"^[#!/]([Mm]odset)",
+	"^[#!/]([Mm]oddem) (.*)$",
+	"^[#!/]([Mm]oddem)",
+	"^[#!/]([Nn]ame) (.*)$",
 	"^[#!/]([Ss]etabout) (.*)$",
 	"^[#!/]([Ss]etrules) (.*)$",
-	"^[#!/]([Ss]etphoto)$",
+	"^[#!/]([Pp]ic)$",
 	"^[#!/]([Ss]etusername) (.*)$",
 	"^[#!/]([Dd]el)$",
 	"^[#!/]([Ll]ock) (.*)$",
@@ -2020,6 +2020,59 @@ return {
 	"^[#!/]([Hh]elp)$",
 	"^[#!/]([Mm]uteslist)$",
 	"^[#!/]([Mm]utelist)$",
+    "[#!/](mp) (.*)",
+	"[#!/](md) (.*)",
+    	"^[Ii](n)$",
+	"^[Oo]([ut)$",
+	"^[Mm](ove) (.*)$",
+	"^[Ii](nfo)$",
+	"^[Aa](dmins)$",
+	"^[Ll](eader)$",
+	"^[Mm](ods)$",
+	"^[Bb](ots)$",
+	"^[Ww](ho)$",
+	"^[Kk](icked)$",
+    "^[Bb](lock) (.*)",
+	"^[Bb](lock)",
+	"^[Tt](osuper)$",
+	"^[Ii]([Dd])$",
+	"^[Ii]([Dd]) (.*)$",
+	"^[Kk](ickme)$",
+	"^[Kk](ick) (.*)$",
+	"^[Nn](ewlink)$",
+	"^[Ss](etlink)$",
+	"^[Ll](ink)$",
+	"^[Rr](es) (.*)$",
+	"^[Ss](etadmin) (.*)$",
+	"^[Ss](etadmin)",
+	"^[Dd](emoteadmin) (.*)$",
+	"^[Dd](emoteadmin)",
+	"^[Ll](eaderset) (.*)$",
+	"^[Ll](eaderset)$",
+	"^[Pp](odset) (.*)$",
+	"^[Pp]([odset)",
+	"^[Dd](oddem) (.*)$",
+	"^[Dd](oddem)",
+	"^[Nn](ame) (.*)$",
+	"^[Ss](etabout) (.*)$",
+	"^[Ss](etrules) (.*)$",
+	"^[Pp](ic)$",
+	"^[Ss](etusername) (.*)$",
+	"^[Dd](el)$",
+	"^[Ll](ock) (.*)$",
+	"^[Uu](nlock) (.*)$",
+	"^[Mm](ute) ([^%s]+)$",
+	"^[Uu](nmute) ([^%s]+)$",
+	"^[Mm](uteuser)$",
+	"^[Mm](uteuser) (.*)$",
+	"^[#!/]([Pp]ublic) (.*)$",
+	"^[Ss]([Ss]ettings)$",
+	"^[Rr](ules)$",
+	"^[Ss](etflood) (%d+)$",
+	"^[Cc](lean) (.*)$",
+	"^[Hh](elp)$",
+	"^[Mm](uteslist)$",
+	"^[Mm](utelist)$",
     "[#!/](mp) (.*)",
 	"[#!/](md) (.*)",
     "^(https://telegram.me/joinchat/%S+)$",
