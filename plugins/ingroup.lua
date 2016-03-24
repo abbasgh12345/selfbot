@@ -948,7 +948,7 @@ local function run(msg, matches)
   end
 if msg.to.type == 'chat' then
   if is_admin1(msg) or not is_support(msg.from.id) then-- Admin only
-	  if matches[1] == 'add' and not matches[2] then
+	  if matches[1]:lower() == 'add' and not matches[2] then
 		if not is_admin1(msg) or not is_support(msg.from.id) then-- Admin only
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] attempted to add group [ "..msg.to.id.." ]")
 			return
@@ -960,7 +960,7 @@ if msg.to.type == 'chat' then
 		print("group "..msg.to.print_name.."("..msg.to.id..") added")
 		return modadd(msg)
 	  end
-	   if matches[1] == 'add' and matches[2] == 'realm' then
+	   if matches[1]:lower() == 'add' and matches[2] == 'realm' then
 		if not is_sudo(msg) then-- Admin only
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] attempted to add realm [ "..msg.to.id.." ]")
 			return
@@ -972,7 +972,7 @@ if msg.to.type == 'chat' then
 		print("group "..msg.to.print_name.."("..msg.to.id..") added as a realm")
 		return realmadd(msg)
 	  end
-	  if matches[1] == 'rem' and not matches[2] then
+	  if matches[1]:lower() == 'rem' and not matches[2] then
 		if not is_admin1(msg) or not is_support(msg.from.id) then-- Admin only
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] attempted to remove group [ "..msg.to.id.." ]")
 			return
@@ -984,7 +984,7 @@ if msg.to.type == 'chat' then
 		print("group "..msg.to.print_name.."("..msg.to.id..") removed")
 		return modrem(msg)
 	  end
-	  if matches[1] == 'rem' and matches[2] == 'realm' then
+	  if matches[1]:lower() == 'rem' and matches[2] == 'realm' then
 		if not is_sudo(msg) then-- Sudo only
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] attempted to remove realm [ "..msg.to.id.." ]")
 			return
@@ -997,7 +997,7 @@ if msg.to.type == 'chat' then
 		return realmrem(msg)
 	  end
 	end
-  if matches[1] == 'chat_created' and msg.from.id == 0 and group_type == "group" then
+  if matches[1]:lower() == 'chat_created' and msg.from.id == 0 and group_type == "group" then
     return automodadd(msg)
   end
  --[[Experimental
@@ -1009,12 +1009,12 @@ if msg.to.type == 'chat' then
 		end
 	--chat_upgrade(chat_id, ok_cb, false)
   end ]]
-  if matches[1] == 'chat_created' and msg.from.id == 0 and group_type == "realm" then
+  if matches[1]:lower() == 'chat_created' and msg.from.id == 0 and group_type == "realm" then
     return autorealmadd(msg)
   end
   if msg.to.id and data[tostring(msg.to.id)] then
     local settings = data[tostring(msg.to.id)]['settings']
-    if matches[1] == 'chat_add_user' then
+    if matches[1]:lower() == 'chat_add_user' then
       if not msg.service then
         return
       end
@@ -1029,7 +1029,7 @@ if msg.to.type == 'chat' then
         return nil
       end
     end
-    if matches[1] == 'chat_del_user' then
+    if matches[1]:lower() == 'chat_del_user' then
       if not msg.service then
          -- return "Are you trying to troll me?"
       end
@@ -1037,7 +1037,7 @@ if msg.to.type == 'chat' then
       local chat = 'chat#id'..msg.to.id
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] deleted user  "..user)
     end
-    if matches[1] == 'chat_delete_photo' then
+    if matches[1]:lower() == 'chat_delete_photo' then
       if not msg.service then
         return
       end
@@ -1065,7 +1065,7 @@ if msg.to.type == 'chat' then
         return nil
       end
     end
-    if matches[1] == 'chat_change_photo' and msg.from.id ~= 0 then
+    if matches[1]:lower() == 'chat_change_photo' and msg.from.id ~= 0 then
       if not msg.service then
         return
       end
@@ -1093,7 +1093,7 @@ if msg.to.type == 'chat' then
         return nil
       end
     end
-    if matches[1] == 'chat_rename' then
+    if matches[1]:lower() == 'chat_rename' then
       if not msg.service then
         return
       end
@@ -1123,7 +1123,7 @@ if msg.to.type == 'chat' then
         return nil
       end
     end
-    if matches[1] == 'setname' and is_momod(msg) then
+    if matches[1]:lower() == 'setname' and is_momod(msg) then
       local new_name = string.gsub(matches[2], '_', ' ')
       data[tostring(msg.to.id)]['settings']['set_name'] = new_name
       save_data(_config.moderation.data, data)
@@ -1133,12 +1133,12 @@ if msg.to.type == 'chat' then
 
       savelog(msg.to.id, "Group { "..msg.to.print_name.." }  name changed to [ "..new_name.." ] by "..name_log.." ["..msg.from.id.."]")
     end
-    if matches[1] == 'setphoto' and is_momod(msg) then
+    if matches[1]:lower() == 'setphoto' and is_momod(msg) then
       data[tostring(msg.to.id)]['settings']['set_photo'] = 'waiting'
       save_data(_config.moderation.data, data)
       return 'Please send me new group photo now'
     end
-    if matches[1] == 'promote' and not matches[2] then
+    if matches[1]:lower() == 'promote' and not matches[2] then
 	   if not is_momod(msg) then
         return
       end
@@ -1149,7 +1149,7 @@ if msg.to.type == 'chat' then
           msgr = get_message(msg.reply_id, promote_by_reply, false)
       end
     end
-    if matches[1] == 'promote' and matches[2] then
+    if matches[1]:lower() == 'promote' and matches[2] then
       if not is_momod(msg) then
         return
       end
@@ -1167,7 +1167,7 @@ if msg.to.type == 'chat' then
 	local username = string.gsub(matches[2], '@', '')
 	return resolve_username(username, promote_demote_res, cbres_extra)
     end
-    if matches[1] == 'demote' and not matches[2] then
+    if matches[1]:lower() == 'demote' and not matches[2] then
 	  if not is_momod(msg) then
         return
       end
@@ -1178,7 +1178,7 @@ if msg.to.type == 'chat' then
           msgr = get_message(msg.reply_id, demote_by_reply, false)
       end
     end
-    if matches[1] == 'demote' and matches[2] then
+    if matches[1]:lower() == 'demote' and matches[2] then
       if not is_momod(msg) then
         return
       end
@@ -1199,19 +1199,19 @@ if msg.to.type == 'chat' then
 	local username = string.gsub(matches[2], '@', '')
 	return resolve_username(username, promote_demote_res, cbres_extra)
     end
-    if matches[1] == 'modlist' then
+    if matches[1]:lower() == 'modlist' then
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group modlist")
       return modlist(msg)
     end
-    if matches[1] == 'about' then
+    if matches[1]:lower() == 'about' then
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group description")
       return get_description(msg, data)
     end
-    if matches[1] == 'rules' then
+    if matches[1]:lower() == 'rules' then
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group rules")
       return get_rules(msg, data)
     end
-    if matches[1] == 'set' then
+    if matches[1]:lower() == 'set' then
       if matches[2] == 'rules' then
         rules = matches[3]
         local target = msg.to.id
@@ -1228,7 +1228,7 @@ if msg.to.type == 'chat' then
     end
 end
 --Begin chat settings
-    if matches[1] == 'lock' then
+    if matches[1]:lower() == 'lock' then
       local target = msg.to.id
 		if matches[2] == 'name' then
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] locked name ")
@@ -1271,7 +1271,7 @@ end
 			return lock_group_contacts(msg, data, target)
 		end
 	end
-    if matches[1] == 'unlock' then
+    if matches[1]:lower() == 'unlock' then
 		local target = msg.to.id
 		if matches[2] == 'name' then
 			savelog(msg.to.id, name_log.." ["..msg.from.id.."] unlocked name ")
@@ -1322,7 +1322,7 @@ end
 	
   --Begin Chat mutes
 
-  if matches[1] == 'mute' and is_owner(msg) then
+  if matches[1]:lower() == 'mute' and is_owner(msg) then
 			local chat_id = msg.to.id
 			if matches[2] == 'audio' then
 			local msg_type = 'Audio'
@@ -1395,7 +1395,7 @@ end
 				end
 			end
 		end
-		if matches[1] == 'unmute' and is_owner(msg) then
+		if matches[1]:lower() == 'unmute' and is_owner(msg) then
 			local chat_id = msg.to.id
 			if matches[2] == 'audio' then
 			local msg_type = 'Audio'
@@ -1470,7 +1470,7 @@ end
 		end
 
 	--Begin chat muteuser
-		if matches[1] == "muteuser" and is_momod(msg) then
+		if matches[1]:lower() == "muteuser" and is_momod(msg) then
 		local chat_id = msg.to.id
 		local hash = "mute_user"..chat_id
 		local user_id = ""
@@ -1478,7 +1478,7 @@ end
 				local receiver = get_receiver(msg)
 				local get_cmd = "mute_user"
 				get_message(msg.reply_id, mute_user_callback, {receiver = receiver, get_cmd = get_cmd})
-			elseif matches[1] == "muteuser" and string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == "muteuser" and string.match(matches[2], '^%d+$') then
 				local user_id = matches[2]
 				if is_muted_user(chat_id, user_id) then
 					mute_user(chat_id, user_id)
@@ -1487,7 +1487,7 @@ end
 					unmute_user(chat_id, user_id)
 					return "["..user_id.."] added to the muted user list"
 				end
-			elseif matches[1] == "muteuser" and not string.match(matches[2], '^%d+$') then
+			elseif matches[1]:lower() == "muteuser" and not string.match(matches[2], '^%d+$') then
 				local receiver = get_receiver(msg)
 				local get_cmd = "mute_user"
 				local username = matches[2]
@@ -1497,7 +1497,7 @@ end
 		end
 
   --End Chat muteuser
-  	if matches[1] == "muteslist" and is_momod(msg) then
+  	if matches[1]:lower() == "muteslist" and is_momod(msg) then
 		local chat_id = msg.to.id
 		if not has_mutes(chat_id) then
 			set_mutes(chat_id)
@@ -1506,19 +1506,19 @@ end
 		savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup muteslist")
 		return mutes_list(chat_id)
 	end
-	if matches[1] == "mutelist" and is_momod(msg) then
+	if matches[1]:lower() == "mutelist" and is_momod(msg) then
 		local chat_id = msg.to.id
 		savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested SuperGroup mutelist")
 		return muted_user_list(chat_id)
 	end
 
-    if matches[1] == 'settings' and is_momod(msg) then
+    if matches[1]:lower() == 'settings' and is_momod(msg) then
       local target = msg.to.id
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group settings ")
       return show_group_settingsmod(msg, target)
     end
 
- if matches[1] == 'public' and is_momod(msg) then
+ if matches[1]:lower() == 'public' and is_momod(msg) then
     local target = msg.to.id
     if matches[2] == 'yes' then
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] set group to: public")
@@ -1531,7 +1531,7 @@ end
   end
 
 if msg.to.type == 'chat' then
-    if matches[1] == 'newlink' and not is_realm(msg) then
+    if matches[1]:lower() == 'newlink' and not is_realm(msg) then
       if not is_momod(msg) then
         return "For moderators only!"
       end
@@ -1548,7 +1548,7 @@ if msg.to.type == 'chat' then
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] revoked group link ")
       return export_chat_link(receiver, callback, true)
     end
-    if matches[1] == 'link' then
+    if matches[1]:lower() == 'link' then
       if not is_momod(msg) then
         return "For moderators only!"
       end
@@ -1559,7 +1559,7 @@ if msg.to.type == 'chat' then
        savelog(msg.to.id, name_log.." ["..msg.from.id.."] requested group link ["..group_link.."]")
       return "Group link:\n"..group_link
     end
-    if matches[1] == 'setowner' and matches[2] then
+    if matches[1]:lower() == 'setowner' and matches[2] then
       if not is_owner(msg) then
         return "For owner only!"
       end
@@ -1569,7 +1569,7 @@ if msg.to.type == 'chat' then
       local text = matches[2].." added as owner"
       return text
     end
-    if matches[1] == 'setowner' and not matches[2] then
+    if matches[1]:lower() == 'setowner' and not matches[2] then
       if not is_owner(msg) then
         return "only for the owner!"
       end
@@ -1578,7 +1578,7 @@ if msg.to.type == 'chat' then
       end
     end
 end
-    if matches[1] == 'owner' then
+    if matches[1]:lower() == 'owner' then
       local group_owner = data[tostring(msg.to.id)]['set_owner']
       if not group_owner then
         return "no owner,ask admins in support groups to set owner for your group"
@@ -1586,7 +1586,7 @@ end
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] used /owner")
       return "Group owner is ["..group_owner..']'
     end
-    if matches[1] == 'setgpowner' then
+    if matches[1]:lower() == 'setgpowner' then
       local receiver = "chat#id"..matches[2]
       if not is_admin1(msg) then
         return "For admins only!"
@@ -1597,7 +1597,7 @@ end
       send_large_msg(receiver, text)
       return
     end
-    if matches[1] == 'setflood' then
+    if matches[1]:lower() == 'setflood' then
       if not is_momod(msg) then
         return "For moderators only!"
       end
@@ -1612,7 +1612,7 @@ end
     end
 
 if msg.to.type == 'chat' then
-    if matches[1] == 'clean' then
+    if matches[1]:lower() == 'clean' then
       if not is_owner(msg) then
         return "Only owner can clean"
       end
@@ -1649,7 +1649,7 @@ if msg.to.type == 'chat' then
       end
     end
 if msg.to.type == 'chat' then
-    if matches[1] == 'kill' and matches[2] == 'chat' then
+    if matches[1]:lower() == 'kill' and matches[2] == 'chat' then
       if not is_admin1(msg) then
           return nil
       end
@@ -1662,7 +1662,7 @@ if msg.to.type == 'chat' then
           return 'This is a realm'
       end
    end
-    if matches[1] == 'kill' and matches[2] == 'realm' then
+    if matches[1]:lower() == 'kill' and matches[2] == 'realm' then
      if not is_admin1(msg) then
          return nil
      end
@@ -1675,14 +1675,14 @@ if msg.to.type == 'chat' then
         return 'This is a group'
      end
    end
-    if matches[1] == 'help' then
+    if matches[1]:lower() == 'help' then
       if not is_momod(msg) or is_realm(msg) then
         return
       end
       savelog(msg.to.id, name_log.." ["..msg.from.id.."] Used /help")
       return help()
     end
-    if matches[1] == 'res' then 
+    if matches[1]:lower() == 'res' then 
       local cbres_extra = {
         chatid = msg.to.id
       }
@@ -1691,7 +1691,7 @@ if msg.to.type == 'chat' then
       resolve_username(username,  callbackres, cbres_extra)
 	  return
     end
-    if matches[1] == 'kickinactive' then
+    if matches[1]:lower() == 'kickinactive' then
       --send_large_msg('chat#id'..msg.to.id, 'I\'m in matches[1]')
 	    if not is_momod(msg) then
 	      return 'Only a moderator can kick inactive users'
